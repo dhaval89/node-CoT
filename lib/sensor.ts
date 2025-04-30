@@ -15,10 +15,10 @@ export default class Sensor {
         this.sensor = sensor;
     }
 
-    to_geojson(): Static<typeof Polygon> | null {
-        if (!this.sensor.range) return null;
-        if (!this.sensor.azimuth) return null;
-        if (!this.sensor.fov) return null;
+    to_geojson(): Static<typeof Polygon> | undefined {
+        if (!this.sensor.range) return undefined;
+        if (!this.sensor.azimuth) return undefined;
+        if (!this.sensor.fov) return undefined;
 
         return sector(
             this.center,

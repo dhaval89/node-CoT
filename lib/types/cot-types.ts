@@ -83,7 +83,7 @@ export default class CoTTypes {
         const xml = xmljs.xml2js(String(await fsp.readFile(new URL('cot-types.xml', import.meta.url))), { compact: true })
 
         checkTypes(xml);
-        if (checkTypes.errors) throw new Err(400, null, `${checkTypes.errors[0].message} (${checkTypes.errors[0].instancePath})`);
+        if (checkTypes.errors) throw new Err(400, undefined, `${checkTypes.errors[0].message} (${checkTypes.errors[0].instancePath})`);
         const types = xml as Static<typeof TypeFormat>;
 
         const cots: Map<string, Static<typeof TypeFormat_COT>> = new Map();

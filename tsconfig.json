@@ -5,9 +5,9 @@
     "compilerOptions": {
         "strict": true,
         "strictNullChecks": true,
-        "module": "es2022",
+        "module": "ESNext",
         "esModuleInterop": true,
-        "target": "es2022",
+        "target": "ES2023",
         "lib": ["es2022", "dom"],
         "skipLibCheck": true,
         "noImplicitAny": true,

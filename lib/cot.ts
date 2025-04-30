@@ -104,7 +104,7 @@ export default class CoT {
         if (process.env.DEBUG_COTS) console.log(JSON.stringify(this.raw))
 
         checkXML(this.raw);
-        if (checkXML.errors) throw new Err(400, null, `${checkXML.errors[0].message} (${checkXML.errors[0].instancePath})`);
+        if (checkXML.errors) throw new Err(400, undefined, `${checkXML.errors[0].message} (${checkXML.errors[0].instancePath})`);
 
         if (!this.raw.event.detail) this.raw.event.detail = {};
         if (!this.raw.event.detail['_flow-tags_']) this.raw.event.detail['_flow-tags_'] = {};
@@ -245,9 +245,9 @@ export default class CoT {
         connection?: Static<typeof VideoConnectionEntryAttributes>
     ): CoT {
         const detail = this.detail();
-        if (detail.__video) throw new Err(400, null, 'A video stream already exists on this CoT');
+        if (detail.__video) throw new Err(400, undefined, 'A video stream already exists on this CoT');
 
-        if (!video.url) throw new Err(400, null, 'A Video URL must be provided');
+        if (!video.url) throw new Err(400, undefined, 'A Video URL must be provided');
 
         if (!video.uid && connection && connection.uid) {
             video.uid = connection.uid
@@ -298,7 +298,7 @@ export default class CoT {
         ];
     }
 
-    sensor(sensor?: Static<typeof SensorAttributes>): Static<typeof Polygon> | null {
+    sensor(sensor?: Static<typeof SensorAttributes>): Static<typeof Polygon> | undefined {
         const detail = this.detail();
 
         if (sensor) {
@@ -308,7 +308,7 @@ export default class CoT {
         }
 
         if (!detail.sensor || !detail.sensor._attributes) {
-            return null;
+            return undefined;
         }
 
         return new Sensor(
@@ -372,7 +372,7 @@ export default class CoT {
      * Return an ATAK Compliant Protobuf
      */
     to_proto(version = 1): Uint8Array {
-        if (version < 1 || version > 1) throw new Err(400, null, `Unsupported Proto Version: ${version}`);
+        if (version < 1 || version > 1) throw new Err(400, undefined, `Unsupported Proto Version: ${version}`);
         const ProtoMessage = RootMessage.lookupType(`atakmap.commoncommo.protobuf.v${version}.TakMessage`)
 
         // The spread operator is important to make sure the delete doesn't modify the underlying detail object
@@ -645,11 +645,11 @@ export default class CoT {
                 }
             }
         } else if (raw.event._attributes.type.startsWith('u-d-c-c')) {
-            if (!raw.event.detail.shape) throw new Err(400, null, 'u-d-c-c (Circle) must define shape value')
+            if (!raw.event.detail.shape) throw new Err(400, undefined, 'u-d-c-c (Circle) must define shape value')
             if (
                 !raw.event.detail.shape.ellipse
                 || !raw.event.detail.shape.ellipse._attributes
-            ) throw new Err(400, null, 'u-d-c-c (Circle) must define ellipse shape value')
+            ) throw new Err(400, undefined, 'u-d-c-c (Circle) must define ellipse shape value')
 
             const ellipse = {
                 major: Number(raw.event.detail.shape.ellipse._attributes.major),
@@ -920,7 +920,7 @@ export default class CoT {
         // TODO Type this
         const msg: any = ProtoMessage.decode(raw);
 
-        if (!msg.cotEvent) throw new Err(400, null, 'No cotEvent Data');
+        if (!msg.cotEvent) throw new Err(400, undefined, 'No cotEvent Data');
 
         const detail: Record<string, any> = {};
         const metadata: Record<string, unknown> = {};
@@ -996,7 +996,7 @@ export default class CoT {
      */
     static from_geojson(feature: Static<typeof InputFeature>): CoT {
         checkFeat(feature);
-        if (checkFeat.errors) throw new Err(400, null, `${checkFeat.errors[0].message} (${checkFeat.errors[0].instancePath})`);
+        if (checkFeat.errors) throw new Err(400, undefined, `${checkFeat.errors[0].message} (${checkFeat.errors[0].instancePath})`);
 
         const cot: Static<typeof JSONCoT> = {
             event: {
@@ -1159,9 +1159,9 @@ export default class CoT {
         cot.event.detail.remarks = { _attributes: { }, _text: feature.properties.remarks || '' };
 
         if (!feature.geometry) {
-            throw new Err(400, null, 'Must have Geometry');
+            throw new Err(400, undefined, 'Must have Geometry');
         } else if (!['Point', 'Polygon', 'LineString'].includes(feature.geometry.type)) {
-            throw new Err(400, null, 'Unsupported Geometry Type');
+            throw new Err(400, undefined, 'Unsupported Geometry Type');
         }
 
         if (feature.geometry.type === 'Point') {
@@ -1177,7 +1177,7 @@ export default class CoT {
             }
         } else if (feature.geometry.type === 'Polygon' && feature.properties.type === 'u-d-c-c') {
             if (!feature.properties.shape || !feature.properties.shape.ellipse) {
-                throw new Err(400, null, 'u-d-c-c (Circle) must define a feature.properties.shape.ellipse property')
+                throw new Err(400, undefined, 'u-d-c-c (Circle) must define a feature.properties.shape.ellipse property')
             }
             cot.event.detail.shape = { ellipse: { _attributes: feature.properties.shape.ellipse } }
 
